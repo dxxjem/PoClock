@@ -110,3 +110,29 @@ onUnmounted(() => {
   margin-left: 8px;
 }
 </style>
+<style scoped>
+.ant-switch {
+  width: 56px !important;
+  height: 28px !important;
+  min-width: 56px !important;
+  background: #e6f7ff !important;
+  border: 2px solid #1890ff !important;
+  box-shadow: 0 0 4px #1890ff44;
+}
+.ant-switch-checked {
+  background: #1890ff !important;
+  border-color: #1890ff !important;
+}
+.ant-switch .ant-switch-handle {
+  width: 24px !important;
+  height: 24px !important;
+  top: 1px !important;
+  left: 1px !important;
+}
+.ant-switch-checked .ant-switch-handle {
+  left: calc(100% - 25px) !important;
+}
+.ant-switch .ant-switch-inner {
+  font-size: 16px !important;
+}
+</style>
