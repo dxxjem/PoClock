@@ -21,5 +21,6 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   // ...
 });
 electron.contextBridge.exposeInMainWorld("electronAPI", {
-  sendNotification: (message) => electron.ipcRenderer.send("notification", message)
+  sendNotification: (message) => electron.ipcRenderer.send("notification", message),
+  setProgressBar: (progress) => electron.ipcRenderer.invoke("set-progress-bar", progress)
 });

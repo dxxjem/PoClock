@@ -26,5 +26,6 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 // ------------------------------------------------------------
 
 contextBridge.exposeInMainWorld('electronAPI', {
-    sendNotification: (message: string) => ipcRenderer.send('notification', message)
+  sendNotification: (message: string) => ipcRenderer.send('notification', message),
+  setProgressBar: (progress: number) => ipcRenderer.invoke('set-progress-bar', progress)
 })

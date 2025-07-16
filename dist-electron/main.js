@@ -1,6 +1,12 @@
-import { app, BrowserWindow, ipcMain, Notification } from "electron";
+import { ipcMain, BrowserWindow, app, Notification } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+ipcMain.handle("set-progress-bar", (_event, progress) => {
+  const win2 = BrowserWindow.getAllWindows()[0];
+  if (win2) {
+    win2.setProgressBar(progress);
+  }
+});
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 process.env.APP_ROOT = path.join(__dirname, "..");
 const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];

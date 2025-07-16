@@ -1,7 +1,14 @@
-import { app, BrowserWindow } from 'electron'
+
+import { app, BrowserWindow, ipcMain, Notification } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { ipcMain, Notification } from 'electron'
+// 任务栏进度条 handler
+ipcMain.handle('set-progress-bar', (_event, progress) => {
+  const win = BrowserWindow.getAllWindows()[0]
+  if (win) {
+    win.setProgressBar(progress)
+  }
+})
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -24,6 +31,7 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
 let win: BrowserWindow | null
+
 
 function createWindow() {
   win = new BrowserWindow({
