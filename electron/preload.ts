@@ -1,22 +1,35 @@
-import { ipcRenderer, contextBridge } from 'electron'
+const { ipcRenderer, contextBridge } = require('electron')
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
-  on(...args: Parameters<typeof ipcRenderer.on>) {
-    const [channel, listener] = args
+  /**
+   * @param {string} channel 
+   * @param {any[]} args 
+   */
+  on(channel, ...args) {
+    const [listener] = args
     return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
   },
-  off(...args: Parameters<typeof ipcRenderer.off>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.off(channel, ...omit)
+  /**
+   * @param {string} channel 
+   * @param {any[]} args 
+   */
+  off(channel, ...args) {
+    return ipcRenderer.off(channel, ...args)
   },
-  send(...args: Parameters<typeof ipcRenderer.send>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.send(channel, ...omit)
+  /**
+   * @param {string} channel 
+   * @param {any[]} args 
+   */
+  send(channel, ...args) {
+    return ipcRenderer.send(channel, ...args)
   },
-  invoke(...args: Parameters<typeof ipcRenderer.invoke>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.invoke(channel, ...omit)
+  /**
+   * @param {string} channel 
+   * @param {any[]} args 
+   */
+  invoke(channel, ...args) {
+    return ipcRenderer.invoke(channel, ...args)
   },
 
   // You can expose other APTs you need here.
@@ -26,6 +39,25 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 // ------------------------------------------------------------
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  sendNotification: (message: string) => ipcRenderer.send('notification', message),
-  setProgressBar: (progress: number) => ipcRenderer.invoke('set-progress-bar', progress)
+  /**
+   * @param {string} message 
+   */
+  sendNotification: (message) => {
+    try {
+      ipcRenderer.send('notification', message)
+    } catch (error) {
+      console.error('Failed to send notification:', error)
+    }
+  },
+  /**
+   * @param {number} progress 
+   */
+  setProgressBar: (progress) => {
+    try {
+      return ipcRenderer.invoke('set-progress-bar', progress)
+    } catch (error) {
+      console.error('Failed to set progress bar:', error)
+      return Promise.resolve()
+    }
+  }
 })

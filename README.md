@@ -8,6 +8,7 @@
 - 无边框窗口，可拖动
 - 支持 Windows 任务栏显示
 - 一键打包为桌面应用
+- 兼容 Windows 7 及以上系统
 
 ## 技术栈
 - [Electron](https://www.electronjs.org/)（桌面端壳）
@@ -28,8 +29,23 @@
    ```
 3. 打包生产版：
    ```bash
-   npm run build && npm run build:electron && npm run build:installer
+   npm run build
    ```
+
+## Windows 7 兼容性说明
+
+为了确保在 Windows 7 上正常运行，我们做了以下优化：
+
+1. 使用 Electron v22.x 版本（最后一个支持 Windows 7 的版本）
+2. 禁用硬件加速以提高兼容性
+3. 添加错误处理以应对 Windows 7 上不支持的 API
+4. 设置适当的渲染选项以确保在旧系统上正确显示
+
+如果您在 Windows 7 上遇到任何问题，请尝试以下解决方案：
+
+1. 确保已安装所有 Windows 更新
+2. 安装最新的 Visual C++ 运行库
+3. 如果遇到渲染问题，尝试以兼容模式运行程序
 
 ## 目录结构
 ```
@@ -68,3 +84,4 @@ MIT
 - 无边框窗口、可拖动
 - 支持 Windows 任务栏显示
 - 一键打包为桌面应用
+- 添加 Windows 7 兼容性支持

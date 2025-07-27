@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue'
 import { Button, Switch, Typography, Space, Card } from 'ant-design-vue'
-import log from 'electron-log';
 
 //import 'ant-design-vue/dist/reset.css'
 
@@ -66,7 +65,6 @@ const toggleMode = () => {
 
 // 开始/暂停计时器
 const toggleTimer = () => {
-  log.info('TypeScript 日志');
   if (isRunning.value) {
     if (timer) {
       clearInterval(timer)

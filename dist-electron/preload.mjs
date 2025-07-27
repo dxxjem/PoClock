@@ -21,6 +21,19 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   // ...
 });
 electron.contextBridge.exposeInMainWorld("electronAPI", {
-  sendNotification: (message) => electron.ipcRenderer.send("notification", message),
-  setProgressBar: (progress) => electron.ipcRenderer.invoke("set-progress-bar", progress)
+  sendNotification: (message) => {
+    try {
+      electron.ipcRenderer.send("notification", message);
+    } catch (error) {
+      console.error("Failed to send notification:", error);
+    }
+  },
+  setProgressBar: (progress) => {
+    try {
+      return electron.ipcRenderer.invoke("set-progress-bar", progress);
+    } catch (error) {
+      console.error("Failed to set progress bar:", error);
+      return Promise.resolve();
+    }
+  }
 });

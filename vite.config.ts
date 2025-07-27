@@ -9,7 +9,7 @@ export default defineConfig({
     vue(),
     electron({
       main: {
-        // Shortcut of `build.lib.entry`.
+        // Ensure this path is correct and matches your main process entry file
         entry: 'electron/main.ts',
       },
       preload: {
@@ -26,4 +26,17 @@ export default defineConfig({
         : {},
     }),
   ],
+  // Add optimization for older systems
+  build: {
+    target: 'es2015',
+    rollupOptions: {
+      external: ['electron'],
+    },
+  },
+  // Ensure compatibility with older Node.js versions
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2015'
+    }
+  }
 })
