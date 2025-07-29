@@ -4,7 +4,6 @@
   "appId": "com.example.clock",
   "asar": true,
   "productName": "番茄时钟",
-  "name": "clock-app",
   "directories": {
     "output": "release/${version}"
   },

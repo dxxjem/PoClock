@@ -15,11 +15,17 @@ declare global {
 
 defineProps<{ msg: string }>()
 
+// Constants for work/rest durations
+const WORK_DURATION = 25 * 60 // 25 minutes in seconds
+const REST_DURATION = 5 * 60   // 5 minutes in seconds
+
 // 时钟状态
 const isWorking = ref(true)
-const timeLeft = ref(25 * 60)
+const timeLeft = ref(WORK_DURATION) // 25 minutes in seconds
 const isRunning = ref(false)
 let timer: number | null = null
+
+
 
 // 格式化时间显示
 const formatTime = (seconds: number) => {
@@ -32,8 +38,8 @@ const formatTime = (seconds: number) => {
 let progressTimer: number | null = null
 const updateTaskbarProgress = () => {
   if (window.electronAPI && window.electronAPI.setProgressBar) {
-    const total = isWorking.value ? (25*6) : 300
-    const progress = Math.max(0, Math.min(1, timeLeft.value / total))
+    const total = isWorking.value ? WORK_DURATION : REST_DURATION
+    const progress = Math.max(0, Math.min(1, (total - timeLeft.value) / total))
     window.electronAPI.setProgressBar(progress)
     console.log(`设置任务栏进度条: ${progress * 100}%`)
   }
@@ -41,8 +47,9 @@ const updateTaskbarProgress = () => {
 
 const startProgressTimer = () => {
   updateTaskbarProgress()
-  progressTimer = window.setInterval(updateTaskbarProgress, 60000)
+  progressTimer = window.setInterval(updateTaskbarProgress, 1000) // Update every second for smoother progress
 }
+
 const stopProgressTimer = () => {
   if (progressTimer) {
     clearInterval(progressTimer)
@@ -52,14 +59,16 @@ const stopProgressTimer = () => {
 
 // 切换工作/休息模式
 const toggleMode = () => {
-  //isWorking.value = !isWorking.value
-  timeLeft.value = isWorking.value ? 25 * 60 : 5 * 60
+  isWorking.value = !isWorking.value
+  timeLeft.value = isWorking.value ? WORK_DURATION : REST_DURATION
+  
   if (timer) {
     clearInterval(timer)
     timer = null
     isRunning.value = false
     stopProgressTimer()
   }
+  
   updateTaskbarProgress()
 }
 
@@ -81,7 +90,15 @@ const toggleTimer = () => {
         if (window.electronAPI) {
           window.electronAPI.sendNotification(isWorking.value ? '工作时间结束！' : '休息时间结束！')
         }
-        toggleMode()
+        // 重置当前模式倒计时
+        timeLeft.value = isWorking.value ? WORK_DURATION : REST_DURATION
+        updateTaskbarProgress()
+        if (timer) {
+          clearInterval(timer)
+          timer = null
+        }
+        stopProgressTimer()
+        isRunning.value = false
       }
     }, 1000)
     startProgressTimer()
