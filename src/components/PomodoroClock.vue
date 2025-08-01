@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue'
-import { Button, Switch, Typography, Space, Card } from 'ant-design-vue'
+import { Button, Typography, Space, Card } from 'ant-design-vue'
 
 //import 'ant-design-vue/dist/reset.css'
 
@@ -17,7 +17,7 @@ declare global {
 defineProps<{ msg: string }>()
 
 // Constants for work/rest durations
-const WORK_DURATION = 1 * 60 // 25 minutes in seconds
+const WORK_DURATION = 25 * 60 // 25 minutes in seconds
 const REST_DURATION = 5 * 60   // 5 minutes in seconds
 
 // 时钟状态
