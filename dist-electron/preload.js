@@ -1,1 +1,26 @@
-"use strict";const n=require("electron");n.contextBridge.exposeInMainWorld("ipcRenderer",{on(...e){const[r,o]=e;return n.ipcRenderer.on(r,(t,...i)=>o(t,...i))},off(...e){const[r,...o]=e;return n.ipcRenderer.off(r,...o)},send(...e){const[r,...o]=e;return n.ipcRenderer.send(r,...o)},invoke(...e){const[r,...o]=e;return n.ipcRenderer.invoke(r,...o)}});n.contextBridge.exposeInMainWorld("electronAPI",{sendNotification:e=>n.ipcRenderer.send("notification",e),setProgressBar:e=>n.ipcRenderer.invoke("set-progress-bar",e)});
+"use strict";
+const electron = require("electron");
+electron.contextBridge.exposeInMainWorld("ipcRenderer", {
+  on(...args) {
+    const [channel, listener] = args;
+    return electron.ipcRenderer.on(channel, (event, ...args2) => listener(event, ...args2));
+  },
+  off(...args) {
+    const [channel, ...omit] = args;
+    return electron.ipcRenderer.off(channel, ...omit);
+  },
+  send(...args) {
+    const [channel, ...omit] = args;
+    return electron.ipcRenderer.send(channel, ...omit);
+  },
+  invoke(...args) {
+    const [channel, ...omit] = args;
+    return electron.ipcRenderer.invoke(channel, ...omit);
+  }
+  // You can expose other APTs you need here.
+  // ...
+});
+electron.contextBridge.exposeInMainWorld("electronAPI", {
+  sendNotification: (message) => electron.ipcRenderer.send("notification", message),
+  setProgressBar: (progress) => electron.ipcRenderer.invoke("set-progress-bar", progress)
+});

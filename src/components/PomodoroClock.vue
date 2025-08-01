@@ -57,21 +57,6 @@ const stopProgressTimer = () => {
   }
 }
 
-// 切换工作/休息模式
-const toggleMode = () => {
-  isWorking.value = !isWorking.value
-  timeLeft.value = isWorking.value ? WORK_DURATION : REST_DURATION
-  
-  if (timer) {
-    clearInterval(timer)
-    timer = null
-    isRunning.value = false
-    stopProgressTimer()
-  }
-  
-  updateTaskbarProgress()
-}
-
 // 开始/暂停计时器
 const toggleTimer = () => {
   if (isRunning.value) {
@@ -120,17 +105,8 @@ onUnmounted(() => {
 
 <template>
   <Card class="clock-card" title="番茄时钟">
-    <Space direction="vertical" size="large" align="center">
+    <Space direction="vertical" size="large">
       <Typography.Title :level="1">{{ formatTime(timeLeft) }}</Typography.Title>
-      <div class="switch-label-row">
-        <Switch
-          v-model:checked="isWorking"
-          @change="toggleMode"
-        />
-        <label class="mode-label">
-          {{ isWorking ? '工作' : '休息' }}
-        </label>
-      </div>
       <Space size="middle">
         <Button type="primary" @click="toggleTimer" :loading="isRunning">
           {{ isRunning ? '暂停' : '开始' }}
