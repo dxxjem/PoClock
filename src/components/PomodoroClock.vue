@@ -59,13 +59,16 @@ const stopProgressTimer = () => {
 
 // 开始/暂停计时器
 const toggleTimer = () => {
-  if (isRunning.value) {
+  const currentState = isRunning.value
+  isRunning.value = !currentState // 立即更新状态
+  
+  if (currentState) { // 如果当前是运行状态，则暂停
     if (timer) {
       clearInterval(timer)
       timer = null
     }
     stopProgressTimer()
-  } else {
+  } else { // 如果当前是暂停状态，则开始
     timer = window.setInterval(() => {
       if (timeLeft.value > 0) {
         timeLeft.value--
@@ -88,7 +91,6 @@ const toggleTimer = () => {
     }, 1000)
     startProgressTimer()
   }
-  isRunning.value = !isRunning.value
 }
 
 // 组件卸载时清除计时器和进度条
@@ -108,7 +110,7 @@ onUnmounted(() => {
     <Space direction="vertical" size="large">
       <Typography.Title :level="1">{{ formatTime(timeLeft) }}</Typography.Title>
       <Space size="middle">
-        <Button type="primary" @click="toggleTimer" :loading="isRunning">
+        <Button type="primary" @click="toggleTimer">
           {{ isRunning ? '暂停' : '开始' }}
         </Button>
       </Space>
