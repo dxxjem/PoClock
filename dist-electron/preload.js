@@ -1,26 +1,39 @@
 "use strict";
 const electron = require("electron");
 electron.contextBridge.exposeInMainWorld("ipcRenderer", {
-  on(...args) {
-    const [channel, listener] = args;
-    return electron.ipcRenderer.on(channel, (event, ...args2) => listener(event, ...args2));
+  on(channel, listener) {
+    return electron.ipcRenderer.on(channel, (event, ...args) => listener(event, ...args));
   },
-  off(...args) {
-    const [channel, ...omit] = args;
-    return electron.ipcRenderer.off(channel, ...omit);
+  off(channel, listener) {
+    return electron.ipcRenderer.off(channel, listener);
   },
-  send(...args) {
-    const [channel, ...omit] = args;
-    return electron.ipcRenderer.send(channel, ...omit);
+  send(channel, ...args) {
+    return electron.ipcRenderer.send(channel, ...args);
   },
-  invoke(...args) {
-    const [channel, ...omit] = args;
-    return electron.ipcRenderer.invoke(channel, ...omit);
+  invoke(channel, ...args) {
+    return electron.ipcRenderer.invoke(channel, ...args);
   }
   // You can expose other APTs you need here.
   // ...
 });
 electron.contextBridge.exposeInMainWorld("electronAPI", {
-  sendNotification: (message) => electron.ipcRenderer.send("notification", message),
-  setProgressBar: (progress) => electron.ipcRenderer.invoke("set-progress-bar", progress)
+  sendNotification: (message) => {
+    console.log("发送通知:", message);
+    return electron.ipcRenderer.send("notification", message);
+  },
+  setProgressBar: (progress) => {
+    console.log("设置进度条:", progress);
+    return electron.ipcRenderer.invoke("set-progress-bar", progress);
+  },
+  setTaskbarIcon: async (iconPath) => {
+    console.log("设置任务栏图标:", iconPath);
+    try {
+      const result = await electron.ipcRenderer.invoke("set-taskbar-icon", iconPath);
+      console.log("任务栏图标设置结果:", result);
+      return result;
+    } catch (error) {
+      console.error("任务栏图标设置失败:", error);
+      return { success: false, error: error.message || "未知错误" };
+    }
+  }
 });

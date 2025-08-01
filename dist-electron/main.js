@@ -1,4 +1,26 @@
 "use strict";
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 const electron = require("electron");
 const node_url = require("node:url");
@@ -27,6 +49,34 @@ electron.ipcMain.handle("set-progress-bar", (_event, progress) => {
     win2.setProgressBar(progress);
   }
 });
+electron.ipcMain.handle("set-taskbar-icon", async (_event, iconPath) => {
+  console.log("接收到设置任务栏图标请求:", iconPath);
+  const win2 = electron.BrowserWindow.getAllWindows()[0];
+  if (win2) {
+    try {
+      let fullPath = iconPath;
+      if (!path__namespace.isAbsolute(iconPath)) {
+        fullPath = path__namespace.join(process.env.VITE_PUBLIC || __dirname$1, iconPath);
+      }
+      console.log("图标完整路径:", fullPath);
+      const fs = await import("node:fs");
+      if (fs.existsSync(fullPath)) {
+        win2.setIcon(fullPath);
+        console.log("任务栏图标设置成功");
+        return { success: true };
+      } else {
+        console.error("图标文件不存在:", fullPath);
+        return { success: false, error: "图标文件不存在" };
+      }
+    } catch (error) {
+      console.error("设置任务栏图标失败:", error);
+      return { success: false, error: error.message || "未知错误" };
+    }
+  } else {
+    console.log("未找到窗口");
+    return { success: false, error: "未找到窗口" };
+  }
+});
 const __dirname$1 = path__namespace.dirname(node_url.fileURLToPath(typeof document === "undefined" ? require("url").pathToFileURL(__filename).href : _documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === "SCRIPT" && _documentCurrentScript.src || new URL("main.js", document.baseURI).href));
 process.env.APP_ROOT = path__namespace.join(__dirname$1, "..");
 const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
@@ -35,15 +85,29 @@ const RENDERER_DIST = path__namespace.join(process.env.APP_ROOT, "dist");
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path__namespace.join(process.env.APP_ROOT, "public") : RENDERER_DIST;
 let win;
 function createWindow() {
+  const isDev = !!VITE_DEV_SERVER_URL;
   win = new electron.BrowserWindow({
     width: 800,
     height: 600,
     title: "番茄时钟",
-    icon: path__namespace.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    icon: path__namespace.join(process.env.VITE_PUBLIC, "work.ico"),
     skipTaskbar: false,
     frame: false,
     webPreferences: {
-      preload: path__namespace.join(__dirname$1, "preload.mjs")
+      preload: path__namespace.join(__dirname$1, "preload.js"),
+      // 修改为.js扩展名
+      // 添加安全设置
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: false,
+      // 设置更严格的安全策略
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      // 开发环境特殊配置
+      ...isDev && {
+        webSecurity: false
+        // 开发环境中禁用webSecurity以便热重载
+      }
     }
   });
   win.webContents.on("did-finish-load", () => {

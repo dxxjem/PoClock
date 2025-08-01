@@ -1,22 +1,24 @@
-import { ipcRenderer, contextBridge } from 'electron'
+import { ipcRenderer, contextBridge, IpcRendererEvent } from 'electron'
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
-  on(...args: Parameters<typeof ipcRenderer.on>) {
-    const [channel, listener] = args
+  on(
+    channel: string, 
+    listener: (event: IpcRendererEvent, ...args: any[]) => void
+  ) {
     return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
   },
-  off(...args: Parameters<typeof ipcRenderer.off>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.off(channel, ...omit)
+  off(
+    channel: string, 
+    listener: (event: IpcRendererEvent, ...args: any[]) => void
+  ) {
+    return ipcRenderer.off(channel, listener)
   },
-  send(...args: Parameters<typeof ipcRenderer.send>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.send(channel, ...omit)
+  send(channel: string, ...args: any[]) {
+    return ipcRenderer.send(channel, ...args)
   },
-  invoke(...args: Parameters<typeof ipcRenderer.invoke>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.invoke(channel, ...omit)
+  invoke(channel: string, ...args: any[]) {
+    return ipcRenderer.invoke(channel, ...args)
   },
 
   // You can expose other APTs you need here.
@@ -26,6 +28,23 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 // ------------------------------------------------------------
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  sendNotification: (message: string) => ipcRenderer.send('notification', message),
-  setProgressBar: (progress: number) => ipcRenderer.invoke('set-progress-bar', progress)
+  sendNotification: (message: string) => {
+    console.log('发送通知:', message)
+    return ipcRenderer.send('notification', message)
+  },
+  setProgressBar: (progress: number) => {
+    console.log('设置进度条:', progress)
+    return ipcRenderer.invoke('set-progress-bar', progress)
+  },
+  setTaskbarIcon: async (iconPath: string) => {
+    console.log('设置任务栏图标:', iconPath)
+    try {
+      const result = await ipcRenderer.invoke('set-taskbar-icon', iconPath)
+      console.log('任务栏图标设置结果:', result)
+      return result
+    } catch (error: any) {
+      console.error('任务栏图标设置失败:', error)
+      return { success: false, error: error.message || '未知错误' }
+    }
+  }
 })

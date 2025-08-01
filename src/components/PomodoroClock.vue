@@ -9,6 +9,7 @@ declare global {
     electronAPI: {
       sendNotification: (message: string) => void
       setProgressBar?: (progress: number) => void
+      setTaskbarIcon?: (iconPath: string) => Promise<{success: boolean, error?: string}>
     }
   }
 }
@@ -16,7 +17,7 @@ declare global {
 defineProps<{ msg: string }>()
 
 // Constants for work/rest durations
-const WORK_DURATION = 25 * 60 // 25 minutes in seconds
+const WORK_DURATION = 1 * 60 // 25 minutes in seconds
 const REST_DURATION = 5 * 60   // 5 minutes in seconds
 
 // 时钟状态
@@ -41,7 +42,7 @@ const updateTaskbarProgress = () => {
     const total = isWorking.value ? WORK_DURATION : REST_DURATION
     const progress = Math.max(0, Math.min(1, (total - timeLeft.value) / total))
     window.electronAPI.setProgressBar(progress)
-    console.log(`设置任务栏进度条: ${progress * 100}%`)
+    //console.log(`设置任务栏进度条: ${progress * 100}%`)
   }
 }
 
@@ -58,7 +59,7 @@ const stopProgressTimer = () => {
 }
 
 // 开始/暂停计时器
-const toggleTimer = () => {
+const toggleTimer = async () => {
   const currentState = isRunning.value
   isRunning.value = !currentState // 立即更新状态
   
@@ -68,8 +69,18 @@ const toggleTimer = () => {
       timer = null
     }
     stopProgressTimer()
+    // 设置任务栏图标为暂停状态
+    if (window.electronAPI && window.electronAPI.setTaskbarIcon) {
+      const result = await window.electronAPI.setTaskbarIcon('stop.ico')
+      console.log('暂停状态图标设置结果:', result)
+    }
   } else { // 如果当前是暂停状态，则开始
-    timer = window.setInterval(() => {
+    // 设置任务栏图标为运行状态
+    if (window.electronAPI && window.electronAPI.setTaskbarIcon) {
+      const result = await window.electronAPI.setTaskbarIcon('work.ico')
+      console.log('运行状态图标设置结果:', result)
+    }
+    timer = window.setInterval(async () => {
       if (timeLeft.value > 0) {
         timeLeft.value--
         //console.log(`剩余时间: ${formatTime(timeLeft.value)}`)
@@ -77,6 +88,11 @@ const toggleTimer = () => {
         // 计时结束，发送通知
         if (window.electronAPI) {
           window.electronAPI.sendNotification(isWorking.value ? '工作时间结束！' : '休息时间结束！')
+        }
+        // 设置任务栏图标为暂停状态
+        if (window.electronAPI && window.electronAPI.setTaskbarIcon) {
+          const result = await window.electronAPI.setTaskbarIcon('stop.ico')
+          console.log('暂停状态图标设置结果:', result)
         }
         // 重置当前模式倒计时
         timeLeft.value = isWorking.value ? WORK_DURATION : REST_DURATION
