@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue'
-import { Button, Typography, Space, Card } from 'ant-design-vue'
+import { Button, Switch, Typography, Space, Card } from 'ant-design-vue'
 
 //import 'ant-design-vue/dist/reset.css'
 
@@ -71,7 +71,7 @@ const toggleTimer = async () => {
     stopProgressTimer()
     // 设置任务栏图标为暂停状态
     if (window.electronAPI && window.electronAPI.setTaskbarIcon) {
-      const result = await window.electronAPI.setTaskbarIcon('stop.ico')
+      const result = await window.electronAPI.setTaskbarIcon('work.ico')
       console.log('暂停状态图标设置结果:', result)
     }
   } else { // 如果当前是暂停状态，则开始
@@ -80,7 +80,7 @@ const toggleTimer = async () => {
       const result = await window.electronAPI.setTaskbarIcon('work.ico')
       console.log('运行状态图标设置结果:', result)
     }
-    timer = window.setInterval(async () => {
+    timer = window.setInterval(() => {
       if (timeLeft.value > 0) {
         timeLeft.value--
         //console.log(`剩余时间: ${formatTime(timeLeft.value)}`)
@@ -88,11 +88,6 @@ const toggleTimer = async () => {
         // 计时结束，发送通知
         if (window.electronAPI) {
           window.electronAPI.sendNotification(isWorking.value ? '工作时间结束！' : '休息时间结束！')
-        }
-        // 设置任务栏图标为暂停状态
-        if (window.electronAPI && window.electronAPI.setTaskbarIcon) {
-          const result = await window.electronAPI.setTaskbarIcon('stop.ico')
-          console.log('暂停状态图标设置结果:', result)
         }
         // 重置当前模式倒计时
         timeLeft.value = isWorking.value ? WORK_DURATION : REST_DURATION
