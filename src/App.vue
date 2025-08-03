@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import PomodoroClock from './components/PomodoroClock.vue'
 import Settings from './components/Settings.vue'
+import ScheduleManager from './components/ScheduleManager.vue'
 import { MenuUnfoldOutlined, SettingOutlined } from '@ant-design/icons-vue'
 
 const activeMenu = ref('pomodoro')
@@ -49,7 +50,7 @@ const closeWindow = () => {
   <div class="app-container">
     <!-- 顶部任务栏 -->
     <div class="title-bar">
-      <div class="title-bar-text">番茄时钟</div>
+      <div class="title-bar-text">个人办公助手</div>
       <div class="title-bar-controls">
         <button class="title-bar-button minimize" @click="minimizeWindow">─</button>
         <button class="title-bar-button maximize" @click="maximizeWindow">□</button>
@@ -79,7 +80,9 @@ const closeWindow = () => {
 
       <!-- 右侧内容区域 -->
       <div class="content">
-        <div v-if="activeMenu === 'pomodoro'">
+        <div v-if="activeMenu === 'pomodoro'" class="pomodoro-layout">
+          <ScheduleManager />
+          <div class="divider"></div>
           <PomodoroClock msg="个人办公助手" />
         </div>
         <div v-else-if="activeMenu === 'settings'">
@@ -296,6 +299,25 @@ const closeWindow = () => {
   max-width: 800px;
   margin: 0 auto;
   padding: 24px;
+}
+
+.pomodoro-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.divider {
+  height: 1px;
+  background-color: #ddd;
+  margin: 0 20px;
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  .divider {
+    background-color: #555;
+  }
 }
 
 /* 彻底隐藏滚动条 */
