@@ -3,7 +3,7 @@
   "description": "一个简洁的番茄时钟应用，基于 Electron + Vue3.",
   "author": "dxxjem",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "commonjs",
   "scripts": {
     "dev": "chcp 65001 && vite",
