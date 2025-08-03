@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "type": "commonjs",
   "scripts": {
-    "dev": "vite",
+    "dev": "chcp 65001 && vite",
     "build": "vue-tsc && vite build && electron-builder",
     "preview": "vite preview",
     "vue-dev": "vite --no-plugins"
