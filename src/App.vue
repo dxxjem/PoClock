@@ -62,7 +62,7 @@ const closeWindow = () => {
       <!-- 左侧菜单 -->
       <div class="sidebar">
         <div class="logo">
-          <img src="./assets/vue.svg" alt="Logo" />
+          <img src="/work.ico" alt="办公助手" />
         </div>
         <div class="menu">
           <div 

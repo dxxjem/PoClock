@@ -58,6 +58,23 @@ const stopProgressTimer = () => {
   }
 }
 
+// 重置计时器
+const resetTimer = () => {
+  if (timer) {
+    clearInterval(timer)
+    timer = null
+  }
+  stopProgressTimer()
+  isRunning.value = false
+  timeLeft.value = isWorking.value ? WORK_DURATION : REST_DURATION
+  updateTaskbarProgress()
+  
+  // 重置任务栏图标
+  if (window.electronAPI && window.electronAPI.setTaskbarIcon) {
+    window.electronAPI.setTaskbarIcon('stop.ico')
+  }
+}
+
 // 开始/暂停计时器
 const toggleTimer = async () => {
   const currentState = isRunning.value
@@ -118,14 +135,15 @@ onUnmounted(() => {
 
 <template>
   <Card class="clock-card" title="番茄时钟">
-    <Space direction="vertical" size="large">
-      <Typography.Title :level="1">{{ formatTime(timeLeft) }}</Typography.Title>
-      <Space size="middle">
+    <div class="horizontal-layout">
+      <Typography.Title :level="1" class="time-display">{{ formatTime(timeLeft) }}</Typography.Title>
+      <div class="button-group">
         <Button type="primary" @click="toggleTimer">
           {{ isRunning ? '暂停' : '开始' }}
         </Button>
-      </Space>
-    </Space>
+        <Button type="default" :disabled="isRunning" @click="resetTimer">重置</Button>
+      </div>
+    </div>
   </Card>
 </template>
 
@@ -135,6 +153,19 @@ onUnmounted(() => {
   margin: 0 auto;
   text-align: center;
   padding: 24px;
+}
+
+.horizontal-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
 }
 </style>
 <style scoped>
