@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import PomodoroClock from './components/PomodoroClock.vue'
 import Settings from './components/Settings.vue'
-import { MenuFoldOutlined, MenuUnfoldOutlined, SettingOutlined } from '@ant-design/icons-vue'
+import { MenuUnfoldOutlined, SettingOutlined } from '@ant-design/icons-vue'
 
 const activeMenu = ref('pomodoro')
 
@@ -37,8 +37,10 @@ const maximizeWindow = () => {
 }
 
 const closeWindow = () => {
-  if (window.electronAPI && (window.electronAPI as any).closeWindow) {
-    (window.electronAPI as any).closeWindow()
+  if (confirm('确定要关闭应用吗？')) {
+    if (window.electronAPI && (window.electronAPI as any).closeWindow) {
+      (window.electronAPI as any).closeWindow()
+    }
   }
 }
 </script>
