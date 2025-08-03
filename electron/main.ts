@@ -42,6 +42,32 @@ ipcMain.handle('set-taskbar-icon', async (_event, iconPath) => {
   }
 })
 
+// 窗口控制 IPC 处理程序
+ipcMain.handle('minimize-window', () => {
+  const win = BrowserWindow.getAllWindows()[0]
+  if (win) {
+    win.minimize()
+  }
+})
+
+ipcMain.handle('maximize-window', () => {
+  const win = BrowserWindow.getAllWindows()[0]
+  if (win) {
+    if (win.isMaximized()) {
+      win.unmaximize()
+    } else {
+      win.maximize()
+    }
+  }
+})
+
+ipcMain.handle('close-window', () => {
+  const win = BrowserWindow.getAllWindows()[0]
+  if (win) {
+    win.close()
+  }
+})
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // The built directory structure

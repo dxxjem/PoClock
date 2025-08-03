@@ -1,4 +1,42 @@
-import { ipcRenderer, contextBridge, IpcRendererEvent } from 'electron'
+import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
+
+interface ElectronAPI {
+  sendNotification: (message: string) => void
+  setProgressBar: (progress: number) => Promise<void>
+  setTaskbarIcon: (iconPath: string) => Promise<{success: boolean, error?: string}>
+  minimizeWindow: () => Promise<void>
+  maximizeWindow: () => Promise<void>
+  closeWindow: () => Promise<void>
+}
+
+// 窗口控制函数
+const minimizeWindow = () => {
+  return ipcRenderer.invoke('minimize-window')
+}
+
+const maximizeWindow = () => {
+  return ipcRenderer.invoke('maximize-window')
+}
+
+const closeWindow = () => {
+  return ipcRenderer.invoke('close-window')
+}
+
+const electronAPI: ElectronAPI = {
+  sendNotification: (message: string) => ipcRenderer.send('notification', message),
+  setProgressBar: (progress: number) => ipcRenderer.invoke('set-progress-bar', progress),
+  setTaskbarIcon: (iconPath: string) => ipcRenderer.invoke('set-taskbar-icon', iconPath),
+  minimizeWindow,
+  maximizeWindow,
+  closeWindow
+}
+
+try {
+  contextBridge.exposeInMainWorld('electronAPI', electronAPI)
+  console.log('Electron API exposed successfully')
+} catch (error) {
+  console.error('Failed to expose Electron API:', error)
+}
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {

@@ -1,5 +1,28 @@
 "use strict";
 const electron = require("electron");
+const minimizeWindow = () => {
+  return electron.ipcRenderer.invoke("minimize-window");
+};
+const maximizeWindow = () => {
+  return electron.ipcRenderer.invoke("maximize-window");
+};
+const closeWindow = () => {
+  return electron.ipcRenderer.invoke("close-window");
+};
+const electronAPI = {
+  sendNotification: (message) => electron.ipcRenderer.send("notification", message),
+  setProgressBar: (progress) => electron.ipcRenderer.invoke("set-progress-bar", progress),
+  setTaskbarIcon: (iconPath) => electron.ipcRenderer.invoke("set-taskbar-icon", iconPath),
+  minimizeWindow,
+  maximizeWindow,
+  closeWindow
+};
+try {
+  electron.contextBridge.exposeInMainWorld("electronAPI", electronAPI);
+  console.log("Electron API exposed successfully");
+} catch (error) {
+  console.error("Failed to expose Electron API:", error);
+}
 electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   on(channel, listener) {
     return electron.ipcRenderer.on(channel, (event, ...args) => listener(event, ...args));

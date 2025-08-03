@@ -77,6 +77,28 @@ electron.ipcMain.handle("set-taskbar-icon", async (_event, iconPath) => {
     return { success: false, error: "未找到窗口" };
   }
 });
+electron.ipcMain.handle("minimize-window", () => {
+  const win2 = electron.BrowserWindow.getAllWindows()[0];
+  if (win2) {
+    win2.minimize();
+  }
+});
+electron.ipcMain.handle("maximize-window", () => {
+  const win2 = electron.BrowserWindow.getAllWindows()[0];
+  if (win2) {
+    if (win2.isMaximized()) {
+      win2.unmaximize();
+    } else {
+      win2.maximize();
+    }
+  }
+});
+electron.ipcMain.handle("close-window", () => {
+  const win2 = electron.BrowserWindow.getAllWindows()[0];
+  if (win2) {
+    win2.close();
+  }
+});
 const __dirname$1 = path__namespace.dirname(node_url.fileURLToPath(typeof document === "undefined" ? require("url").pathToFileURL(__filename).href : _documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === "SCRIPT" && _documentCurrentScript.src || new URL("main.js", document.baseURI).href));
 process.env.APP_ROOT = path__namespace.join(__dirname$1, "..");
 const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];

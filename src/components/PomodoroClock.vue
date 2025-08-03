@@ -71,7 +71,7 @@ const toggleTimer = async () => {
     stopProgressTimer()
     // 设置任务栏图标为暂停状态
     if (window.electronAPI && window.electronAPI.setTaskbarIcon) {
-      const result = await window.electronAPI.setTaskbarIcon('work.ico')
+      const result = await window.electronAPI.setTaskbarIcon('stop.ico')
       console.log('暂停状态图标设置结果:', result)
     }
   } else { // 如果当前是暂停状态，则开始
@@ -162,6 +162,8 @@ onUnmounted(() => {
   background: #1890ff !important;
   border-color: #1890ff !important;
 }
+</style>
+<style scoped>
 .ant-switch .ant-switch-handle {
   width: 24px !important;
   height: 24px !important;
@@ -173,5 +175,13 @@ onUnmounted(() => {
 }
 .ant-switch .ant-switch-inner {
   font-size: 16px !important;
+}
+</style>
+<style>
+/* 隐藏组件内的滚动条 */
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 </style>
