@@ -12,6 +12,12 @@
     "vue-dev": "vite --no-plugins"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.18",
+    "@fullcalendar/daygrid": "^6.1.18",
+    "@fullcalendar/interaction": "^6.1.18",
+    "@fullcalendar/list": "^6.1.18",
+    "@fullcalendar/timegrid": "^6.1.18",
+    "@fullcalendar/vue3": "^6.1.18",
     "ant-design-vue": "^3.2.20",
     "vue": "^3.4.21"
   },

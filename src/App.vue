@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import PomodoroClock from './components/PomodoroClock.vue'
 import Settings from './components/Settings.vue'
 import ScheduleManager from './components/ScheduleManager.vue'
-import { MenuUnfoldOutlined, SettingOutlined } from '@ant-design/icons-vue'
+import { MenuUnfoldOutlined, CalendarOutlined, SettingOutlined } from '@ant-design/icons-vue'
 
 const activeMenu = ref('pomodoro')
 
@@ -12,6 +12,11 @@ const menus = [
     key: 'pomodoro',
     icon: MenuUnfoldOutlined,
     title: '番茄时钟',
+  },
+  {
+    key: 'calendar',
+    icon: CalendarOutlined,
+    title: '日程管理',
   },
   {
     key: 'settings',
@@ -80,10 +85,11 @@ const closeWindow = () => {
 
       <!-- 右侧内容区域 -->
       <div class="content">
-        <div v-if="activeMenu === 'pomodoro'" class="pomodoro-layout">
-          <ScheduleManager />
-          <div class="divider"></div>
+        <div v-if="activeMenu === 'pomodoro'">
           <PomodoroClock msg="个人办公助手" />
+        </div>
+        <div v-else-if="activeMenu === 'calendar'">
+          <ScheduleManager />
         </div>
         <div v-else-if="activeMenu === 'settings'">
           <Settings />
