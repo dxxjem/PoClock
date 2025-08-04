@@ -149,23 +149,30 @@ onUnmounted(() => {
 
 <style scoped>
 .clock-card {
-  max-width: 400px;
-  margin: 0 auto;
-  text-align: center;
-  padding: 24px;
+  margin: 20px;
+  padding: 10px;
+  height: 150px;
+  position: relative; /* 添加相对定位 */
+  max-width: 100%; /* 防止卡片超出窗口宽度 */
+  box-sizing: border-box; /* 确保内边距不影响宽度计算 */
 }
 
 .horizontal-layout {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.time-display {
+  font-size: 48px;
+  margin-bottom: 0;
 }
 
 .button-group {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 </style>
 <style scoped>
