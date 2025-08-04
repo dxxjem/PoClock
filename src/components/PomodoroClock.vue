@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue'
-import { Button, Typography, Space, Card } from 'ant-design-vue'
+import { Button, Typography, Card } from 'ant-design-vue'
 
 //import 'ant-design-vue/dist/reset.css'
 
